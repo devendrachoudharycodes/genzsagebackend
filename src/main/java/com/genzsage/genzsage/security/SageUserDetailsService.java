@@ -12,21 +12,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-    @Autowired
-    private SageRepository sageRepository;
-
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Sage sage =sageRepository.findByIdentityOrEmailOrPhoneNumber(username);
-        if (sage == null) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
-        }
 
-        return User.builder()
-                .username(sage.getIdentity())
-                .password(sage.getPasswordHash())
-                .roles("USER")
-                .build();
     }
 }
