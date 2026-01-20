@@ -2,16 +2,12 @@ package com.genzsage.genzsage.auth;
 
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.boot.model.internal.StrictIdGeneratorResolverSecondPass;
 
 import java.time.LocalDate;
 
 
-
-@Getter
-@Setter
 @Data
 @ToString
 public class RegisterSageRequest {
@@ -25,6 +21,8 @@ public class RegisterSageRequest {
     private String bio;
     private boolean isPrivate;
     private String profilePicUrl;
+    private String deviceInfo; //this is generated client side for device security i.e. no other device can login after taking tokens from this one
+    private String otherMeta; // this is any other meta which this user's device identifies itself
 
 }
 

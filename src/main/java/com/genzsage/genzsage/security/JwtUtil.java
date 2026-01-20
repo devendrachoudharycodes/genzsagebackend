@@ -1,9 +1,11 @@
 package com.genzsage.genzsage.security;
 
+import com.genzsage.genzsage.auth.AuthResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -18,24 +20,19 @@ public class JwtUtil {
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
 
+    private long tokenValidityInSeconds = 1000*60*13;
+
     private SecretKey getSecretKey() {
         byte[] keyBytes = Base64.getDecoder().decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateAccessToken(UserDetails user) {
-        return generateToken(user, 1000 * 60 * 30); // 30 mins
-    }
 
-    public String generateRefreshToken(UserDetails user) {
-        return generateToken(user, 1000 * 60 * 60 * 24 * 7); // 7 days
-    }
-
-    private String generateToken(UserDetails userDetails, long expiration) {
+    public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .expiration(new Date(System.currentTimeMillis() + tokenValidityInSeconds))
                 .signWith(getSecretKey())
                 .compact();
     }

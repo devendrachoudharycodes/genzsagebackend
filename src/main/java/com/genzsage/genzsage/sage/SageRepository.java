@@ -18,7 +18,7 @@ public interface SageRepository extends JpaRepository<Sage, Long> {
     Optional<Sage> findByEmail(String email);
 
     @Query("SELECT s FROM Sage s WHERE s.identity = :input OR s.email = :input OR s.phoneNumber = :input")
-    Sage findByIdentityOrEmailOrPhoneNumber(@Param("input") String username);
+   Optional<Sage> findByIdentityOrEmailOrPhoneNumber(@Param("input") String username);
 
     // Refactored to match Tag entity field name 'name'
     @Query("SELECT s FROM Sage s JOIN s.interests t WHERE t.name = :tagName")
