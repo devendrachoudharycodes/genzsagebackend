@@ -12,8 +12,7 @@ COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
 
 # 2. Download dependencies (safe to fail if offline, but helps caching)
-RUN ./mvnw dependency:go-offline
-
+RUN ./mvnw dependency:resolve
 # 3. Copy the actual source code
 COPY src ./src
 
