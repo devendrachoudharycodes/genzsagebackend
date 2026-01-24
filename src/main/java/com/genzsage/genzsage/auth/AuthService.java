@@ -6,13 +6,15 @@ import com.genzsage.genzsage.sage.SageRepository;
 import com.genzsage.genzsage.security.JwtUtil;
 import com.genzsage.genzsage.security.SageUserDetailsService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+import java.util.ArrayList;
+import java.util.List;
 
 
 @AllArgsConstructor
@@ -25,6 +27,33 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final AuthenticationManager authenticationManager;
     private final SageMapper sageMapper;
+
+    public GlobalResponseDTO<Boolean> checkAvailability(SageAvalibilityRequest request) {
+
+        List<String> issues = new ArrayList<>();
+
+        if (sageRepository.existsByIdentity(request.getIdentity())) {
+            issues.add("Identity is already taken");
+        }
+
+        if (sageRepository.existsByEmail(request.getEmail())) {
+            issues.add("Email is already registered");
+        }
+
+        if (sageRepository.existsByPhoneNumber(request.getPhoneNumber())) {
+            issues.add("Phone number is already registered");
+        }
+
+        if (issues.isEmpty()) {
+            return GlobalResponseDTO.success(true, "Proceed to registration");
+        }
+
+        return GlobalResponseDTO.failure(
+                HttpStatus.CONFLICT.value(),
+                "Availability check failed",
+                issues
+        );
+    }
 
     @Transactional
     public GlobalResponseDTO<AuthResponse> registerSage(RegisterSageRequest registerSageRequest) {

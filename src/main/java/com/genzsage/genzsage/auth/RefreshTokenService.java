@@ -38,7 +38,8 @@ public class RefreshTokenService {
 
     public RefreshToken verfiyToken(String token, String deviceId, String otherMeta) {
         Optional<RefreshToken> byToken = refreshTokenRepo.findByToken(token);
-        boolean verified = byToken.isPresent() && byToken.get().getExpiryDate().isAfter(Instant.now()) && byToken.get().getDeviceId().equals(deviceId) && byToken.get().getOtherMeta().equals(otherMeta);
+        boolean verified = byToken.isPresent() && byToken.get().getExpiryDate().isAfter(Instant.now())
+                && byToken.get().getDeviceId().equals(deviceId) && byToken.get().getOtherMeta().equals(otherMeta);
         if (verified) {
             RefreshToken tokenNew = generateToken(byToken.get().getUser(), deviceId, otherMeta);
             refreshTokenRepo.delete(byToken.get());

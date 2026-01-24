@@ -24,4 +24,9 @@ public interface SageRepository extends JpaRepository<Sage, Long> {
     @Query("SELECT s FROM Sage s JOIN s.interests t WHERE t.name = :tagName")
     List<Sage> findAllByInterestName(@Param("tagName") String tagName);
 
+    boolean existsByIdentity(String identity);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByPhoneNumber(String phoneNumber);
 }

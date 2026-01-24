@@ -47,4 +47,12 @@ public class AuthController {
     public GlobalResponseDTO<Boolean> logout(@RequestBody LogoutRequest logoutRequest) {
         return authService.logout(logoutRequest);
     }
+
+    /**
+     * checks if there is already any sage existing in the database with provided credentials
+     */
+    @PostMapping("/checkAvailability")
+    public GlobalResponseDTO<Boolean> checkIfAvailable(@RequestBody SageAvalibilityRequest request) {
+        return authService.checkAvailability(request);
+    }
 }
