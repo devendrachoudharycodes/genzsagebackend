@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.ToString;
 import org.hibernate.boot.model.internal.StrictIdGeneratorResolverSecondPass;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 
@@ -16,7 +17,7 @@ public class RegisterSageRequest {
     private String password;
     private String phoneNumber;
     private String profileName;
-    private LocalDate birthDate;
+    private Instant birthDate;
     private String country;
     private String bio;
     private boolean isPrivate;

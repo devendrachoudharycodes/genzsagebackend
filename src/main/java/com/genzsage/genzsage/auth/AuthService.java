@@ -66,7 +66,7 @@ public class AuthService {
 
     public GlobalResponseDTO<AuthResponse> refreshToken(RefreshTokenRequest refreshTokenRequest) {
 
-        RefreshToken refreshToken = refreshTokenService.verfiyToken(refreshTokenRequest.getRefreshToken()
+        RefreshToken refreshToken = refreshTokenService.verifyToken(refreshTokenRequest.getRefreshToken()
                 , refreshTokenRequest.getDeviceId()
                 , refreshTokenRequest.getOtherMetadata());
 

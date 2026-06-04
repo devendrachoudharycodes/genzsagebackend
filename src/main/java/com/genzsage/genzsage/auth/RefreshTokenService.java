@@ -2,15 +2,14 @@ package com.genzsage.genzsage.auth;
 
 
 import com.genzsage.genzsage.sage.Sage;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 
 @AllArgsConstructor
@@ -36,16 +35,39 @@ public class RefreshTokenService {
         return refreshTokenRepo.findByToken(token);
     }
 
-    public RefreshToken verfiyToken(String token, String deviceId, String otherMeta) {
+    public RefreshToken verifyToken(String token, String deviceId, String otherMeta) {
         Optional<RefreshToken> byToken = refreshTokenRepo.findByToken(token);
-        boolean verified = byToken.isPresent() && byToken.get().getExpiryDate().isAfter(Instant.now())
-                && byToken.get().getDeviceId().equals(deviceId) && byToken.get().getOtherMeta().equals(otherMeta);
-        if (verified) {
-            RefreshToken tokenNew = generateToken(byToken.get().getUser(), deviceId, otherMeta);
-            refreshTokenRepo.delete(byToken.get());
-        return tokenNew;
+
+        // 1. Check if the token exists in the database
+        if (byToken.isEmpty()) {
+            throw new RuntimeException("Invalid Token: Token not found.");
         }
-        throw new RuntimeException("Invalid token");
+
+        RefreshToken existingToken = byToken.get();
+
+        // 2. Check if the token has expired
+        if (!existingToken.getExpiryDate().isAfter(Instant.now())) {
+            throw new RuntimeException("Invalid Token: Token expired on " + existingToken.getExpiryDate());
+        }
+
+        // 3. Check if the device ID matches
+        if (!existingToken.getDeviceId().equals(deviceId)) {
+            throw new RuntimeException(String.format(
+                    "Invalid Token: Device ID mismatch. Expected %s but got %s",
+                    existingToken.getDeviceId(), deviceId
+            ));
+        }
+
+        // 4. Check if the metadata matches
+        if (!existingToken.getOtherMeta().equals(otherMeta)) {
+            throw new RuntimeException("Invalid Token: Metadata mismatch.");
+        }
+
+        // 5. If all checks pass, generate the new token and delete the old one
+        RefreshToken tokenNew = generateToken(existingToken.getUser(), deviceId, otherMeta);
+        refreshTokenRepo.delete(existingToken);
+
+        return tokenNew;
     }
 
 

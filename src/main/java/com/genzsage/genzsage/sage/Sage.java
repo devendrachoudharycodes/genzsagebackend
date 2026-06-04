@@ -53,7 +53,7 @@ public class Sage {
 
     @NotNull(message = "Birth date is required")
     @Past(message = "Birth date must be in the past")
-    private LocalDate birthDate;
+    private Instant birthDate;
 
     @NotBlank(message = "Country is required")
     private String country;
