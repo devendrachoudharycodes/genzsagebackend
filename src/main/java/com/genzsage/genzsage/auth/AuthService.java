@@ -68,7 +68,7 @@ public class AuthService {
 
         RefreshToken refreshToken = refreshTokenService.verifyToken(refreshTokenRequest.getRefreshToken()
                 , refreshTokenRequest.getDeviceId()
-                , refreshTokenRequest.getOtherMetadata());
+                , refreshTokenRequest.getOtherMetaData());
 
         String accessToken = jwtUtil.generateToken(new SageUserDetails(refreshToken.getUser()));
         return GlobalResponseDTO.success(new AuthResponse(accessToken, refreshToken.getToken()), "Refresh Token");

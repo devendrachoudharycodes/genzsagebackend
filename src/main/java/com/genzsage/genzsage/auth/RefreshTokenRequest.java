@@ -7,5 +7,5 @@ import lombok.Data;
 public class RefreshTokenRequest {
     private String refreshToken;
     private String deviceId;
-    private String otherMetadata;
+    private String otherMetaData;
 }

@@ -1,6 +1,6 @@
 package com.genzsage.genzsage.sage;
 
-import com.genzsage.genzsage.tag.Tag;
+import com.genzsage.genzsage.tag.entity.Tag;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*; // Import validation constraints
 import lombok.*;
@@ -9,7 +9,6 @@ import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 

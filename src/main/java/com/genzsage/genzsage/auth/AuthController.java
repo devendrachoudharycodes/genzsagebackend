@@ -5,19 +5,23 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
+
     private final AuthService authService;
+    // Note: It is best practice to make the Logger private, static, and final.
+    private static final Logger logger = Logger.getLogger(AuthController.class.getName());
 
     /**
      * Registers a new Sage user with device and meta information.
      */
     @PostMapping("/register")
     public GlobalResponseDTO<AuthResponse> register(@RequestBody RegisterSageRequest request) {
+        logger.info("Incoming /register request body: " + request.toString());
         return authService.registerSage(request);
     }
 
@@ -27,7 +31,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     public GlobalResponseDTO<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
-
+        logger.info("Incoming /login request body: " + loginRequest.toString());
         return authService.login(loginRequest);
     }
 
@@ -37,6 +41,7 @@ public class AuthController {
      */
     @PostMapping("/refresh")
     public GlobalResponseDTO<AuthResponse> refresh(@RequestBody RefreshTokenRequest refreshRequest) {
+        logger.info("Incoming /refresh request body: " + refreshRequest.toString());
         return authService.refreshToken(refreshRequest);
     }
 
@@ -45,6 +50,7 @@ public class AuthController {
      */
     @PostMapping("/logout")
     public GlobalResponseDTO<Boolean> logout(@RequestBody LogoutRequest logoutRequest) {
+        logger.info("Incoming /logout request body: " + logoutRequest.toString());
         return authService.logout(logoutRequest);
     }
 
@@ -53,6 +59,7 @@ public class AuthController {
      */
     @PostMapping("/checkAvailability")
     public GlobalResponseDTO<Boolean> checkIfAvailable(@RequestBody SageAvalibilityRequest request) {
+        logger.info("Incoming /checkAvailability request body: " + request.toString());
         return authService.checkAvailability(request);
     }
 }
