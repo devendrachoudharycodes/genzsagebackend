@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -107,5 +109,19 @@ public class AuthService {
     public GlobalResponseDTO<Boolean> logout(LogoutRequest logoutRequest) {
         refreshTokenService.deleteToken(logoutRequest.getRefreshToken());
         return GlobalResponseDTO.success(true, "Logout Successful");
+    }
+
+    @Transactional(readOnly = true)
+    public Sage getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+
+        return sageRepository.findByIdentity(username)
+                .orElseThrow(() -> new RuntimeException("Currently authenticated user not found in database"));
     }
 }

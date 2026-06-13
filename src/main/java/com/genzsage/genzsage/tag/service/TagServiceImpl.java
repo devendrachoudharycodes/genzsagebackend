@@ -1,5 +1,6 @@
 package com.genzsage.genzsage.tag.service;
 
+import com.genzsage.genzsage.sage.Sage;
 import com.genzsage.genzsage.tag.entity.Tag;
 import com.genzsage.genzsage.tag.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,5 +52,23 @@ public class TagServiceImpl implements TagService {
             tag.setDeleted(true);
             tagRepository.save(tag);
         });
+    }
+
+    @Override
+    public Set<Tag> findOrCreateTags(Set<String> tagNames, Sage creator) {
+        return tagNames.stream()
+                .map(name -> {
+                    Optional<Tag> existingTag = tagRepository.findByName(name);
+                    if (existingTag.isPresent()) {
+                        if (existingTag.get().isDeleted()) {
+                            throw new IllegalStateException("Tag '" + name + "' has been banned and cannot be used.");
+                        }
+                        return existingTag.get();
+                    } else {
+                        Tag newTag = Tag.builder().name(name).creator(creator).build();
+                        return tagRepository.save(newTag);
+                    }
+                })
+                .collect(Collectors.toSet());
     }
 }
