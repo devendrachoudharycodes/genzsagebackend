@@ -1,7 +1,7 @@
 package com.genzsage.genzsage.aphorism.service;
 
+import com.genzsage.genzsage.aphorism.dto.AphorismFeedDto;
 import com.genzsage.genzsage.aphorism.dto.AphorismResponseDto;
-import com.genzsage.genzsage.aphorism.dto.AphorismSummaryDto;
 import com.genzsage.genzsage.aphorism.dto.CreateAphorismRequestDto;
 import com.genzsage.genzsage.aphorism.entity.Aphorism;
 import com.genzsage.genzsage.aphorism.repository.AphorismRepository;
@@ -64,18 +64,39 @@ public class AphorismServiceImpl implements AphorismService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AphorismSummaryDto> getAllAphorisms() {
-        return aphorismRepository.findAll().stream()
-                .map(this::mapToAphorismSummaryDto)
+    public List<AphorismFeedDto> getAllAphorismsForFeed() {
+        return aphorismRepository.findAllForFeed().stream()
+                .map(this::mapToAphorismFeedDto)
                 .collect(Collectors.toList());
     }
 
-    private AphorismSummaryDto mapToAphorismSummaryDto(Aphorism aphorism) {
-        return AphorismSummaryDto.builder()
-                .id(aphorism.getId())
+    private AphorismFeedDto mapToAphorismFeedDto(Aphorism aphorism) {
+        Sage sage = aphorism.getSage();
+        Question question = aphorism.getQuestion();
+
+        AphorismFeedDto.SageDetailsDto sageDto = AphorismFeedDto.SageDetailsDto.builder()
+                .identity(sage.getIdentity())
+                .profileName(sage.getProfileName())
+                .profilePicUrl(sage.getProfilePicUrl())
+                .country(sage.getCountry())
+                .build();
+
+        AphorismFeedDto.QuestionDetailsDto questionDto = AphorismFeedDto.QuestionDetailsDto.builder()
+                .question(question.getQuestion())
+                .optionOne(question.getOptionOne())
+                .optionTwo(question.getOptionTwo())
+                .optionThree(question.getOptionThree())
+                .optionFour(question.getOptionFour())
+                .correctAnswer(question.getCorrectAnswer())
+                .explanation(question.getExplanation())
+                .aiAnswer(question.getAiAnswer())
+                .build();
+
+        return AphorismFeedDto.builder()
                 .title(aphorism.getTitle())
                 .created(aphorism.getCreated())
-                .sageUsername(aphorism.getSage().getIdentity())
+                .sage(sageDto)
+                .question(questionDto)
                 .build();
     }
 

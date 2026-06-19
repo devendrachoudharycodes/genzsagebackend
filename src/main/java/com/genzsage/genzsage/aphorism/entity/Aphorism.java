@@ -54,6 +54,14 @@ public class Aphorism {
     @ToString.Exclude
     private Set<Tag> tags = new HashSet<>();
 
+    @Builder.Default
+    @Column(nullable = false)
+    private Double averageRating = 0.0;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer voteCount = 0;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
